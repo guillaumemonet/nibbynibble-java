@@ -69,7 +69,9 @@ public final class Main {
         }
 
         Machine machine = new Machine();
-        loadProgram(machine.mem, findData(data));
+        Path file = headlessFrames != null ? findData(data) : findOrAskData(data);
+        if (file == null) return;
+        loadProgram(machine.mem, file);
         NibbyNibble game = new NibbyNibble(machine, lives, time);
         machine.setInterrupts(game::level3Interrupt, game::keyboard);
         machine.start(game);
@@ -78,14 +80,54 @@ public final class Main {
         else new Window(machine, scale).run();
     }
 
+    private static final String PREF_DATA = "dataFile";
+
     static Path findData(String explicit) throws IOException {
-        List<String> candidates = explicit != null ? List.of(explicit)
-                : List.of("data/Nibby", "nibbynibble/data/Nibby", "../nibbynibble/data/Nibby", "../../nibbynibble/data/Nibby");
-        for (String c : candidates) {
-            Path p = Path.of(c);
-            if (Files.isRegularFile(p)) return p;
+        Path p = searchData(explicit);
+        if (p == null) throw new IOException("data file 'Nibby' not found; pass its path as argument");
+        return p;
+    }
+
+    private static Path searchData(String explicit) {
+        List<Path> candidates = new ArrayList<>();
+        if (explicit != null) {
+            candidates.add(Path.of(explicit));
+        } else {
+            // next to the packaged executable (jpackage), then relative to the working directory
+            String app = System.getProperty("jpackage.app-path");
+            if (app != null) {
+                Path dir = Path.of(app).toAbsolutePath().getParent();
+                candidates.add(dir.resolve("original-assets/Nibby"));
+                candidates.add(dir.resolve("data/Nibby"));
+                candidates.add(dir.resolve("Nibby"));
+            }
+            for (String c : List.of("original-assets/Nibby", "data/Nibby", "Nibby", "../nibbynibble/data/Nibby"))
+                candidates.add(Path.of(c));
+            String saved = java.util.prefs.Preferences.userNodeForPackage(Main.class).get(PREF_DATA, null);
+            if (saved != null) candidates.add(Path.of(saved));
         }
-        throw new IOException("data file 'Nibby' not found (tried " + candidates + "); pass its path as argument");
+        for (Path p : candidates) if (Files.isRegularFile(p)) return p;
+        return null;
+    }
+
+    /** Like {@link #findData} but asks the player to locate the file, and remembers it. */
+    static Path findOrAskData(String explicit) throws Exception {
+        Path p = searchData(explicit);
+        if (p != null) return p;
+        Path[] chosen = new Path[1];
+        javax.swing.SwingUtilities.invokeAndWait(() -> {
+            javax.swing.JOptionPane.showMessageDialog(null,
+                    "Ce portage a besoin du fichier de données original du jeu (data/Nibby\n"
+                            + "de l'installation WHDLoad de Nibby Nibble). Sélectionnez-le.",
+                    "Nibby Nibble", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            var fc = new javax.swing.JFileChooser();
+            fc.setDialogTitle("Fichier de données Nibby");
+            if (fc.showOpenDialog(null) == javax.swing.JFileChooser.APPROVE_OPTION) chosen[0] = fc.getSelectedFile().toPath();
+        });
+        if (chosen[0] != null) {
+            java.util.prefs.Preferences.userNodeForPackage(Main.class).put(PREF_DATA, chosen[0].toAbsolutePath().toString());
+        }
+        return chosen[0];
     }
 
     static void loadProgram(Memory mem, Path file) throws IOException {

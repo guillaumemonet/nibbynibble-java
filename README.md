@@ -1,7 +1,7 @@
 # Nibby Nibble — portage Java
 
 Portage en Java du jeu Amiga **Nibby Nibble** (© 1993 Gabriele Roncolato, publié par Amiga News),
-obtenu en décompilant le programme 68000 d'origine (`../nibbynibble/data/Nibby`, installation WHDLoad).
+obtenu en décompilant le programme 68000 d'origine (`data/Nibby` de l'installation WHDLoad, conservé dans `original-assets/Nibby`).
 
 ## Captures d'écran
 
@@ -25,9 +25,8 @@ actuelles, sans émulateur.
 
 - Le jeu original, © 1993 Gabriele Roncolato, a été distribué en **domaine public** sur la disquette
   du magazine *Amiga Dream*. Tout le mérite du jeu revient à son auteur.
-- **Aucune donnée du jeu n'est distribuée dans ce dépôt** (ni graphismes, ni musique, ni niveaux, ni
-  exécutable). Le portage lit le fichier `data/Nibby` d'une installation WHDLoad que l'utilisateur
-  doit posséder.
+- Le fichier de données original (`data/Nibby` de l'installation WHDLoad, compressé RNC, non modifié)
+  est conservé dans `original-assets/` pour la préservation. Il n'est pas couvert par la licence MIT.
 - Ce projet n'a aucune vocation commerciale. Si un ayant droit souhaite son retrait, il suffit d'ouvrir
   une issue ou de contacter l'auteur : il sera retiré sans délai.
 
@@ -43,19 +42,24 @@ désassemblages de `reverse/listings/` sont fournis à des fins de préservation
 
 Le jeu n'est **pas** réécrit « à peu près » : chaque routine du programme 68000 a été traduite en
 méthode Java (l'adresse d'origine est indiquée en commentaire). Les ressources (graphismes, copper lists,
-niveaux, module musical) sont lues directement depuis le fichier de données original. Aucun
-asset n'est dupliqué dans le projet.
+niveaux, module musical) sont lues directement depuis le fichier de données original, conservé tel quel
+dans `original-assets/Nibby` : aucune ressource n'est extraite ni convertie.
 
 ## Lancer
 
 Pré-requis : JDK 21.
 
 ```sh
-gradle jar
-java -jar build/libs/nibbynibble.jar ../nibbynibble/data/Nibby
-# ou
 gradle run
+# ou
+gradle jar
+java -jar build/libs/nibbynibble.jar            # cherche original-assets/Nibby
+java -jar build/libs/nibbynibble.jar chemin/vers/Nibby
 ```
+
+Une version Windows prête à jouer (runtime Java inclus, rien à installer) est disponible dans les
+[releases](https://github.com/guillaumemonet/nibbynibble-java/releases) : décompresser le zip et lancer
+`NibbyNibble.exe`. Pour la reconstruire : `gradle jpackageImage` (résultat dans `build/dist/NibbyNibble`).
 
 Options :
 

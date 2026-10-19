@@ -30,4 +30,6 @@ The original game "Nibby Nibble" (c) 1993 Gabriele Roncolato was distributed
 as public domain software on the cover disk of the French magazine
 "Amiga Dream". The disassemblies in reverse/listings/ are provided for
 preservation and educational purposes, with credit to the original author.
-No game data is distributed with this repository.
+The original game data file is included unmodified in original-assets/ for
+preservation; it is not covered by the MIT License and remains credited to
+Gabriele Roncolato.
