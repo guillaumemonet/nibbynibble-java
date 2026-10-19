@@ -10,8 +10,13 @@ public final class Video {
     public static final int FIRST_LINE = 0x2c;
     public static final int HEIGHT = 264;
     private static final int LINES = 312;
-    /** Horizontal beam position of the first displayed pixel (DIWSTRT $81). */
-    private static final int HSTART0 = 0x81;
+    /**
+     * Sprite HSTART that lines up with bitplane pixel 0 (DDFSTRT $38, DIWSTRT $81).
+     * The game places the head sprite at 2x+$80 and blits the body at pixel 2x;
+     * with $81 the head would sit one pixel left of the body and a tight vertical
+     * U-turn would wrongly trigger the head/body collision.
+     */
+    private static final int HSTART0 = 0x80;
 
     private final Custom c;
     private final Memory mem;
