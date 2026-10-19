@@ -154,6 +154,11 @@ public final class Main {
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.addWindowListener(new WindowAdapter() {
                 @Override
+                public void windowClosing(WindowEvent e) {
+                    running = false;
+                }
+
+                @Override
                 public void windowClosed(WindowEvent e) {
                     running = false;
                 }
@@ -269,13 +274,26 @@ public final class Main {
         }
 
         private void present() {
+            if (!canvas.isDisplayable()) {
+                running = false;
+                return;
+            }
             image.setRGB(0, 0, Video.WIDTH, Video.HEIGHT, machine.video.pixels, 0, Video.WIDTH);
-            BufferStrategy bs = canvas.getBufferStrategy();
-            Graphics2D g = (Graphics2D) bs.getDrawGraphics();
-            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-            g.drawImage(image, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
-            g.dispose();
-            bs.show();
+            try {
+                BufferStrategy bs = canvas.getBufferStrategy();
+                if (bs == null) {
+                    canvas.createBufferStrategy(2);
+                    return;
+                }
+                Graphics2D g = (Graphics2D) bs.getDrawGraphics();
+                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+                g.drawImage(image, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
+                g.dispose();
+                if (!bs.contentsLost()) bs.show();
+            } catch (IllegalStateException e) {
+                // window closed (or not yet realized) while drawing
+                if (!canvas.isDisplayable()) running = false;
+            }
         }
     }
 }
