@@ -3,6 +3,19 @@
 Portage en Java du jeu Amiga **Nibby Nibble** (© 1993 Gabriele Roncolato, publié par Amiga News),
 obtenu en décompilant le programme 68000 d'origine (`../nibbynibble/data/Nibby`, installation WHDLoad).
 
+## Captures d'écran
+
+Images produites par le portage Java (mode `--headless`), agrandies ×2.
+
+| | |
+|:---:|:---:|
+| ![Écran titre](docs/screenshots/title.png) | ![Partie au niveau 1](docs/screenshots/level1.png) |
+| Écran titre | Niveau 1 : le serpent a mangé une partie des points |
+| ![Niveau 3](docs/screenshots/level3.png) | ![Mort](docs/screenshots/death.png) |
+| Niveau 3 | Morsure : le corps brûle de la queue vers la tête |
+| ![Fin de niveau](docs/screenshots/fade.png) | ![Écran STAGE](docs/screenshots/stage.png) |
+| Fin de niveau : fondu vers le blanc | Écran « STAGE » avant chaque niveau |
+
 ## Préservation et but éducatif
 
 Ce projet a pour seul but la **préservation du patrimoine du jeu vidéo Amiga** et un **usage éducatif** :
