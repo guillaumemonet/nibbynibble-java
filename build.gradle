@@ -1,0 +1,24 @@
+plugins {
+    id 'application'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+application {
+    mainClass = 'nibby.Main'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'nibby.Main'
+    }
+}
+
+run {
+    workingDir = rootProject.projectDir
+    args = ['../nibbynibble/data/Nibby']
+}
