@@ -12,7 +12,7 @@ Images produites par le portage Java (mode `--headless`), agrandies ×2.
 | ![Écran titre](docs/screenshots/title.png) | ![Partie au niveau 1](docs/screenshots/level1.png) |
 | Écran titre | Niveau 1 : le serpent a mangé une partie des points |
 | ![Niveau 3](docs/screenshots/level3.png) | ![Mort](docs/screenshots/death.png) |
-| Niveau 3 | Morsure : le corps brûle de la queue vers la tête |
+| Niveau 3 | Mort (chrono à 0) : le corps brûle de la queue vers la tête |
 | ![Fin de niveau](docs/screenshots/fade.png) | ![Écran STAGE](docs/screenshots/stage.png) |
 | Fin de niveau : fondu vers le blanc | Écran « STAGE » avant chaque niveau |
 
