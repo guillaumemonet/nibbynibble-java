@@ -10,8 +10,8 @@ documenter le fonctionnement interne d'un jeu de 1993 (code 68000, copper, blitt
 Paula), montrer une démarche de rétro-ingénierie complète et garder ce jeu jouable sur les machines
 actuelles, sans émulateur.
 
-- Le jeu original reste la propriété de son auteur, Gabriele Roncolato, et de ses ayants droit.
-  Toutes les marques et tous les droits leur appartiennent.
+- Le jeu original, © 1993 Gabriele Roncolato, a été distribué en **domaine public** sur la disquette
+  du magazine *Amiga Dream*. Tout le mérite du jeu revient à son auteur.
 - **Aucune donnée du jeu n'est distribuée dans ce dépôt** (ni graphismes, ni musique, ni niveaux, ni
   exécutable). Le portage lit le fichier `data/Nibby` d'une installation WHDLoad que l'utilisateur
   doit posséder.
@@ -23,9 +23,8 @@ Auteur du portage : Guillaume Monet (guillaume.monet@free.fr).
 ### Licence
 
 Le code Java, les outils Python et la documentation de ce dépôt sont sous licence [MIT](LICENSE).
-Cette licence ne couvre pas le jeu original (code, graphismes, musique, niveaux), qui reste la
-propriété de ses ayants droit, ni les désassemblages de `reverse/listings/`, fournis uniquement à des
-fins éducatives et de préservation.
+Le jeu original (domaine public, disquette *Amiga Dream*) reste crédité à Gabriele Roncolato ; les
+désassemblages de `reverse/listings/` sont fournis à des fins de préservation et d'enseignement.
 
 ## Le portage
 

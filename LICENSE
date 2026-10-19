@@ -21,14 +21,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 -------------------------------------------------------------------------------
-Scope of this license
+About the original game
 
-This license covers only the original work of the author of this repository:
-the Java code, the Python tools and the documentation.
+This license covers the work of the author of this repository: the Java code,
+the Python tools and the documentation.
 
-It does NOT cover the original game "Nibby Nibble" (c) 1993 Gabriele Roncolato:
-its program code, graphics, music, levels and any other content remain the
-property of their respective rights holders. The files in reverse/listings/
-are disassemblies of the original program and are provided for educational
-and preservation purposes only; they are not licensed under the MIT License.
+The original game "Nibby Nibble" (c) 1993 Gabriele Roncolato was distributed
+as public domain software on the cover disk of the French magazine
+"Amiga Dream". The disassemblies in reverse/listings/ are provided for
+preservation and educational purposes, with credit to the original author.
 No game data is distributed with this repository.
