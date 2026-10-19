@@ -20,6 +20,13 @@ actuelles, sans émulateur.
 
 Auteur du portage : Guillaume Monet (guillaume.monet@free.fr).
 
+### Licence
+
+Le code Java, les outils Python et la documentation de ce dépôt sont sous licence [MIT](LICENSE).
+Cette licence ne couvre pas le jeu original (code, graphismes, musique, niveaux), qui reste la
+propriété de ses ayants droit, ni les désassemblages de `reverse/listings/`, fournis uniquement à des
+fins éducatives et de préservation.
+
 ## Le portage
 
 Le jeu n'est **pas** réécrit « à peu près » : chaque routine du programme 68000 a été traduite en
