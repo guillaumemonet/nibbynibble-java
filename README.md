@@ -1,176 +1,177 @@
-# Nibby Nibble — portage Java
+# Nibby Nibble — Java port
 
-Portage en Java du jeu Amiga **Nibby Nibble** (© 1993 Gabriele Roncolato, publié par Amiga News),
-obtenu en décompilant le programme 68000 d'origine (`data/Nibby` de l'installation WHDLoad, conservé dans `original-assets/Nibby`).
+[Version française](README.fr.md)
 
-## Captures d'écran
+Java port of the Amiga game **Nibby Nibble** (© 1993 Gabriele Roncolato, presented by Amiga News),
+obtained by decompiling the original 68000 program (`data/Nibby` from the WHDLoad install, kept in `original-assets/Nibby`).
 
-Images produites par le portage Java (mode `--headless`), agrandies ×2.
+## Screenshots
+
+Frames produced by the Java port (`--headless` mode), scaled ×2.
 
 | | |
 |:---:|:---:|
-| ![Écran titre](docs/screenshots/title.png) | ![Partie au niveau 1](docs/screenshots/level1.png) |
-| Écran titre | Niveau 1 : le serpent a mangé une partie des points |
-| ![Niveau 3](docs/screenshots/level3.png) | ![Mort](docs/screenshots/death.png) |
-| Niveau 3 | Mort (chrono à 0) : le corps brûle de la queue vers la tête |
-| ![Fin de niveau](docs/screenshots/fade.png) | ![Écran STAGE](docs/screenshots/stage.png) |
-| Fin de niveau : fondu vers le blanc | Écran « STAGE » avant chaque niveau |
+| ![Title screen](docs/screenshots/title.png) | ![Playing level 1](docs/screenshots/level1.png) |
+| Title screen | Level 1: the snake has eaten some of the dots |
+| ![Level 3](docs/screenshots/level3.png) | ![Death](docs/screenshots/death.png) |
+| Level 3 | Death (time out): the body burns from the tail to the head |
+| ![End of level](docs/screenshots/fade.png) | ![STAGE screen](docs/screenshots/stage.png) |
+| End of level: fade to white | "STAGE" screen shown before each level |
 
-## Préservation et but éducatif
+## Preservation and educational purpose
 
-Ce projet a pour seul but la **préservation du patrimoine du jeu vidéo Amiga** et un **usage éducatif** :
-documenter le fonctionnement interne d'un jeu de 1993 (code 68000, copper, blitter, sprites matériels,
-Paula), montrer une démarche de rétro-ingénierie complète et garder ce jeu jouable sur les machines
-actuelles, sans émulateur.
+The sole purpose of this project is the **preservation of Amiga video game heritage** and
+**educational use**: documenting the inner workings of a 1993 game (68000 code, copper, blitter,
+hardware sprites, Paula), showing a complete reverse-engineering process, and keeping the game playable
+on today's machines without an emulator.
 
-- Le jeu original, © 1993 Gabriele Roncolato, a été distribué en **domaine public** sur la disquette
-  du magazine *Amiga Dream*. Tout le mérite du jeu revient à son auteur.
-- Le fichier de données original (`data/Nibby` de l'installation WHDLoad, compressé RNC, non modifié)
-  est conservé dans `original-assets/` pour la préservation. Il n'est pas couvert par la licence MIT.
-- Ce projet n'a aucune vocation commerciale. Si un ayant droit souhaite son retrait, il suffit d'ouvrir
-  une issue ou de contacter l'auteur : il sera retiré sans délai.
+- The original game, © 1993 Gabriele Roncolato, was distributed as **public domain** software on the
+  cover disk of the French magazine *Amiga Dream*. All credit for the game goes to its author.
+- The original data file (`data/Nibby` from the WHDLoad install, RNC packed, unmodified) is kept in
+  `original-assets/` for preservation. It is not covered by the MIT license.
+- This project is strictly non-commercial. If a rights holder wishes it to be taken down, just open an
+  issue or contact the author: it will be removed promptly.
 
-Auteur du portage : Guillaume Monet (guillaume.monet@free.fr).
+Port author: Guillaume Monet (guillaume.monet@free.fr).
 
-### Licence
+### License
 
-Le code Java, les outils Python et la documentation de ce dépôt sont sous licence [MIT](LICENSE).
-Le jeu original (domaine public, disquette *Amiga Dream*) reste crédité à Gabriele Roncolato ; les
-désassemblages de `reverse/listings/` sont fournis à des fins de préservation et d'enseignement.
+The Java code, Python tools and documentation in this repository are under the [MIT](LICENSE) license.
+The original game (public domain, *Amiga Dream* cover disk) remains credited to Gabriele Roncolato; the
+disassemblies in `reverse/listings/` are provided for preservation and teaching purposes.
 
-## Le portage
+## The port
 
-Le jeu n'est **pas** réécrit « à peu près » : chaque routine du programme 68000 a été traduite en
-méthode Java (l'adresse d'origine est indiquée en commentaire). Les ressources (graphismes, copper lists,
-niveaux, module musical) sont lues directement depuis le fichier de données original, conservé tel quel
-dans `original-assets/Nibby` : aucune ressource n'est extraite ni convertie.
+The game is **not** a loose remake: every routine of the 68000 program was translated into a Java
+method (the original address is given in a comment). The resources (graphics, copper lists, levels,
+music module) are read directly from the original data file, kept as is in `original-assets/Nibby`:
+nothing is extracted or converted.
 
-## Lancer
+## Running
 
-Pré-requis : JDK 21.
+Requirement: JDK 21.
 
 ```sh
 gradle run
-# ou
+# or
 gradle jar
-java -jar build/libs/nibbynibble.jar            # cherche original-assets/Nibby
-java -jar build/libs/nibbynibble.jar chemin/vers/Nibby
+java -jar build/libs/nibbynibble.jar            # looks for original-assets/Nibby
+java -jar build/libs/nibbynibble.jar path/to/Nibby
 ```
 
-Une version Windows prête à jouer (runtime Java inclus, rien à installer) est disponible dans les
-[releases](https://github.com/guillaumemonet/nibbynibble-java/releases) : décompresser le zip et lancer
-`NibbyNibble.exe`. Pour la reconstruire : `gradle jpackageImage` (résultat dans `build/dist/NibbyNibble`).
+A ready-to-play Windows build (Java runtime included, nothing to install) is available in the
+[releases](https://github.com/guillaumemonet/nibbynibble-java/releases): unzip it and run
+`NibbyNibble.exe`. To rebuild it: `gradle jpackageImage` (output in `build/dist/NibbyNibble`).
 
-Options :
+Options:
 
-| option            | effet                                                          |
+| option            | effect                                                         |
 |-------------------|----------------------------------------------------------------|
-| `--scale N`       | facteur de zoom de la fenêtre (3 par défaut)                   |
-| `--lives`         | trainer « Unlimited Lives » de l'install WHDLoad               |
-| `--time`          | trainer « Unlimited Time »                                     |
-| `--headless N DIR evt...` | exécute N trames sans fenêtre, sauve des PNG et `audio.wav` (tests) |
+| `--scale N`       | window zoom factor (default 3)                                 |
+| `--lives`         | "Unlimited Lives" trainer from the WHDLoad install             |
+| `--time`          | "Unlimited Time" trainer                                       |
+| `--headless N DIR evt...` | runs N frames without a window, saves PNGs and `audio.wav` (testing) |
 
-Exemple headless : `--headless 700 out 100:fire+ 110:fire- 200:fire+ 205:fire- 320:right+ 400:shot`
-(événements `frame:action`, actions `fire|up|down|left|right|lmb|rmb` suivies de `+`/`-`,
-un code clavier Amiga en hexa, ou `shot`).
+Headless example: `--headless 700 out 100:fire+ 110:fire- 200:fire+ 205:fire- 320:right+ 400:shot`
+(`frame:action` events; actions are `fire|up|down|left|right|lmb|rmb` followed by `+`/`-`,
+an Amiga raw key code in hex, or `shot`).
 
-## Contrôles
+## Controls
 
 | Amiga                      | PC                                  |
 |----------------------------|-------------------------------------|
-| joystick                   | flèches (ou pavé numérique 8/2/4/6) |
-| bouton feu                 | Shift, Ctrl ou Entrée               |
-| ESC (retour au titre)      | Échap                               |
-| quitter (F10 sous WHDLoad) | F10 ou fermer la fenêtre            |
-| clic droit + feu + clic gauche | idem à la souris : passe le niveau (cheat d'origine) |
+| joystick                   | arrow keys (or numpad 8/2/4/6)      |
+| fire button                | Shift, Ctrl or Enter                |
+| ESC (back to title)        | Esc                                 |
+| quit (F10 under WHDLoad)   | F10 or close the window             |
+| right click + fire + left click | same with the mouse: skips the level (original cheat) |
 
-Cheat d'origine : taper `THE RONCLER GANG` sur l'écran titre → vies infinies (et chrono figé).
+Original cheat: type `THE RONCLER GANG` on the title screen → infinite lives (and the timer stops).
 
-## Règles (déduites du code)
+## Rules (derived from the code)
 
-- Labyrinthe de 20×14 cases de 16×16 ; 10 niveaux qui bouclent (le niveau 11 redevient le 1).
-- Il faut manger tous les points avant la fin du chrono. Chaque point vaut 1 (affiché ×10).
-- Le serpent grandit d'un segment tous les 2 puis 1 point en alternance (91 segments maximum).
-- Un mur ne tue pas : le serpent s'arrête. On ne peut tourner qu'à angle droit, sur une case.
-- On meurt en se mordant (collision matérielle sprite de la tête / playfield du corps),
-  ou en bougeant alors que le chrono est à 0. On recommence alors le niveau (les points reviennent,
-  le score est conservé). 3 vies supplémentaires au départ.
+- 20×14 maze of 16×16 tiles; 10 levels that loop (level 11 is level 1 again).
+- Eat all the dots before the timer runs out. Each dot is worth 1 (displayed ×10).
+- The snake grows by one segment every 2 then 1 dots, alternately (91 segments maximum).
+- Walls do not kill: the snake just stops. You can only turn at right angles, on a tile.
+- You die by biting yourself (hardware collision between the head sprite and the body playfield),
+  or by moving while the timer is at 0. The level then restarts (dots come back, the score is kept).
+  You start with 3 spare lives.
 
 ## Architecture
 
 ```
-nibby/Main.java              lanceur, fenêtre Swing, boucle 50 Hz cadencée par l'audio, mode headless
-nibby/amiga/Rnc.java         décompresseur Rob Northen ProPack (méthode 1) — data/Nibby est compressé
-nibby/amiga/Memory.java      512 Ko de chip RAM ; l'image du programme est chargée à $30000
-nibby/amiga/Custom.java      registres $DFFxxx (écrits par le jeu et par le copper)
-nibby/amiga/Video.java       copper + bitplanes (dual playfield) + sprites (attachés) + CLXDAT → framebuffer 320×264
-nibby/amiga/Blitter.java     blitter (canaux A/B/C/D, décalages, masques, minterms)
-nibby/amiga/Paula.java       4 voies audio DMA avec le comportement de « latch » des registres
-nibby/amiga/Machine.java     synchronisation : le programme 68000 porté tourne dans son thread
-                             et attend la VBL comme l'original attendait le faisceau
-nibby/game/NibbyNibble.java  le jeu : titre, niveaux, déplacement, croissance, mort, fondus, HUD
-nibby/game/Replay.java       la routine musicale d'origine (style NoiseTracker) + bruitages sur la voie 2
+nibby/Main.java              launcher, Swing window, 50 Hz loop paced by audio, headless mode
+nibby/amiga/Rnc.java         Rob Northen ProPack (method 1) decompressor — data/Nibby is packed
+nibby/amiga/Memory.java      512 KB of chip RAM; the program image is loaded at $30000
+nibby/amiga/Custom.java      $DFFxxx registers (written by the game and by the copper)
+nibby/amiga/Video.java       copper + bitplanes (dual playfield) + (attached) sprites + CLXDAT → 320×264 framebuffer
+nibby/amiga/Blitter.java     blitter (A/B/C/D channels, shifts, masks, minterms)
+nibby/amiga/Paula.java       4 DMA audio voices with the register "latch" behaviour
+nibby/amiga/Machine.java     synchronisation: the ported 68000 program runs in its own thread
+                             and waits for the VBL just as the original waited for the beam
+nibby/game/NibbyNibble.java  the game: title, levels, movement, growth, death, fades, HUD
+nibby/game/Replay.java       the original music routine (NoiseTracker style) + sound effects on voice 2
 ```
 
-Plutôt que de redessiner l'écran avec des primitives Java2D, le portage garde le modèle d'affichage
-de l'original : le jeu écrit dans les copper lists, dans les mots de contrôle des sprites et fait
-dessiner le corps par le blitter via une copper list générée à chaque trame. Une petite émulation du
-chipset (copper ligne par ligne, blitter, sprites, détection de collision) suffit alors à rendre
-fidèlement les dégradés copper, le double playfield et les collisions pixel à pixel dont dépend
-la règle « se mordre la queue ».
+Rather than redrawing the screen with Java2D primitives, the port keeps the original display model:
+the game writes into copper lists and sprite control words, and has the body drawn by the blitter
+through a copper list generated every frame. A small chipset emulation (line-by-line copper, blitter,
+sprites, collision detection) is then enough to faithfully render the copper gradients, the dual
+playfield and the pixel-accurate collisions that the "bite your own tail" rule depends on.
 
-## Analyse du binaire d'origine
+## Analysis of the original binary
 
-### Chargement (`NibbyNibble.slave`, voir `reverse/listings/whdload_slave.s`)
+### Loading (`NibbyNibble.slave`, see `reverse/listings/whdload_slave.s`)
 
-Le slave WHDLoad charge `data/Nibby` décompressé (RNC) à `$30000`, applique des patchs
-(attente blitter, clavier : flèches + Shift droit, interruptions) puis saute à `$30000`.
-Trainers : NOP de `subi #1,$31896` (vies) et de `subi #1,$31898` (temps).
+The WHDLoad slave loads `data/Nibby` unpacked (RNC) at `$30000`, applies patches (blitter waits,
+keyboard: arrows + right Shift, interrupts) then jumps to `$30000`.
+Trainers: NOP of `subi #1,$31896` (lives) and of `subi #1,$31898` (time).
 
-### Carte mémoire (image de 256 Ko chargée à `$30000`)
+### Memory map (256 KB image loaded at `$30000`)
 
-| adresse           | contenu                                                                    |
+| address           | content                                                                    |
 |-------------------|----------------------------------------------------------------------------|
-| `$30000-$31818`   | code du jeu                                                                |
-| `$3181A`          | interruption clavier (code brut → `$3188A`)                                |
-| `$31878`          | séquence du cheat (`THE RONCLER GANG`, codes clavier bruts)               |
-| `$3188A-$31912`   | variables (voir les champs de `NibbyNibble`)                               |
-| `$31956`          | copper list du jeu (dual playfield 3+2 plans, sprites, palette)            |
-| `$31A76`          | copper list de la mort                                                     |
-| `$31BFA` / `$31C66` | écrans « STAGE nn » / « GAME OVER »                                      |
-| `$31CD2`          | copper list de la barre d'état                                             |
-| `$31D6E`          | copper list du titre (180 lignes de dégradé sur COLOR14)                   |
-| `$323D2`          | table de couleurs arc-en-ciel                                              |
-| `$32484-$33304`   | sprites de la tête (4 directions × 3 images, paires attachées), sprites de queue |
-| `$32FC4-$33784`   | formes du corps (32×16, 2 plans), masque, images d'explosion               |
-| `$33B04`          | tuile vide ; `$33B64` copie de travail du niveau                           |
-| `$33C7C-$34B90`   | 10 niveaux : descripteur {carte, tuile mur, tuile point, palette}, carte = nb points, temps, 20×14 caractères (`0` mur, `.` point) |
-| `$34CBC/$34DFC/$35214` | tables décalage/offset X et offset Y pour le blitter                  |
-| `$35194`          | police de chiffres 8×8                                                     |
-| `$35418-$366D8`   | historique circulaire des positions (600 entrées, doublé pour la lecture)  |
-| `$366D8-$36F66`   | replay musical + interruptions CIA                                         |
-| `$38000`          | image du titre (4 plans 320×200)                                           |
-| `$40000`          | module ProTracker « nib-rsi » (sample 16 « esplosione », 17 « bopp »)      |
-| `$57800`          | barre d'état (3 plans 320×37)                                              |
-| `$5E000/$5F000`   | copper lists de blit du corps (double tampon, générées)                    |
-| `$60000/$65000/$6A000` | 3 tampons du playfield du corps (triple tampon)                       |
-| `$70000`          | playfield du labyrinthe (3 plans entrelacés)                               |
+| `$30000-$31818`   | game code                                                                  |
+| `$3181A`          | keyboard interrupt (raw code → `$3188A`)                                   |
+| `$31878`          | cheat sequence (`THE RONCLER GANG`, raw key codes)                         |
+| `$3188A-$31912`   | variables (see the fields of `NibbyNibble`)                                |
+| `$31956`          | game copper list (dual playfield 3+2 planes, sprites, palette)            |
+| `$31A76`          | death copper list                                                          |
+| `$31BFA` / `$31C66` | "STAGE nn" / "GAME OVER" screens                                         |
+| `$31CD2`          | status bar copper list                                                     |
+| `$31D6E`          | title copper list (180 lines of gradient on COLOR14)                       |
+| `$323D2`          | rainbow colour table                                                       |
+| `$32484-$33304`   | head sprites (4 directions × 3 frames, attached pairs), tail sprites       |
+| `$32FC4-$33784`   | body shapes (32×16, 2 planes), mask, explosion frames                      |
+| `$33B04`          | empty tile; `$33B64` working copy of the level                             |
+| `$33C7C-$34B90`   | 10 levels: descriptor {map, wall tile, dot tile, palette}, map = dot count, time, 20×14 characters (`0` wall, `.` dot) |
+| `$34CBC/$34DFC/$35214` | X shift/offset and Y offset tables for the blitter                    |
+| `$35194`          | 8×8 digit font                                                             |
+| `$35418-$366D8`   | circular position history (600 entries, mirrored for reading)              |
+| `$366D8-$36F66`   | music replay + CIA interrupts                                              |
+| `$38000`          | title picture (4 planes 320×200)                                           |
+| `$40000`          | ProTracker module "nib-rsi" (sample 16 "esplosione", 17 "bopp")            |
+| `$57800`          | status bar (3 planes 320×37)                                               |
+| `$5E000/$5F000`   | body blit copper lists (double buffered, generated)                        |
+| `$60000/$65000/$6A000` | 3 body playfield buffers (triple buffering)                           |
+| `$70000`          | maze playfield (3 interleaved planes)                                      |
 
-### Outils (`reverse/tools`)
+### Tools (`reverse/tools`)
 
-Scripts Python utilisés pour l'analyse (Python 3 + `capstone` + `pillow`) :
+Python scripts used for the analysis (Python 3 + `capstone` + `pillow`):
 
-- `rnc.py data/Nibby nibby.bin` — décompression ;
-- `m68kdis.py fichier début fin base` — désassemblage 68000 linéaire ;
-- `copper.py adresse [n]` — décodage d'une copper list ;
-- `gfx.py` — extraction PNG des graphismes (titre, barre d'état, tuiles, sprites).
+- `rnc.py data/Nibby nibby.bin` — decompression;
+- `m68kdis.py file start end base` — linear 68000 disassembly;
+- `copper.py address [n]` — copper list decoding;
+- `gfx.py` — PNG extraction of the graphics (title, status bar, tiles, sprites).
 
-`copper.py` et `gfx.py` lisent `work/nibby.bin`.
+`copper.py` and `gfx.py` read `work/nibby.bin`.
 
-Les listings désassemblés sont dans `reverse/listings`.
+The disassembly listings are in `reverse/listings`.
 
-## Écarts connus
+## Known differences
 
-- Le filtre passe-bas de l'Amiga (commande E0x) n'est pas émulé ; la sortie audio est un mélange
-  stéréo direct des 4 voies, avec un léger crossfeed.
-- Le timing est à la trame (50 Hz) : les attentes de raster et les blits sont instantanés.
+- The Amiga low-pass filter (E0x command) is not emulated; the audio output is a direct stereo mix of
+  the 4 voices, with a slight crossfeed.
+- Timing is per frame (50 Hz): raster waits and blits are instantaneous.
