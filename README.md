@@ -157,6 +157,3 @@ Les listings désassemblés sont dans `reverse/listings`.
 - Le filtre passe-bas de l'Amiga (commande E0x) n'est pas émulé ; la sortie audio est un mélange
   stéréo direct des 4 voies, avec un léger crossfeed.
 - Le timing est à la trame (50 Hz) : les attentes de raster et les blits sont instantanés.
-- Correctif volontaire : dans l'original (`$3108C`), la dernière image de la combustion du corps (une
-  petite flamme) n'est jamais effacée et reste affichée jusqu'au niveau suivant. Le portage efface
-  chaque segment quand il sort de l'animation (`NibbyNibble.eraseSegment`).

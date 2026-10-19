@@ -643,10 +643,6 @@ public final class NibbyNibble implements Runnable {
         while (true) {
             vsync();
             int d0 = count--;
-            // Not in the original: the segment leaving the window keeps its last
-            // flame frame forever there; erase it so the flames die out.
-            int gone = d0 + 8;
-            if (gone >= 1 && gone <= segments) eraseSegment(gone);
             java.util.Arrays.fill(shift, 0);
             java.util.Arrays.fill(dest, 0);
             boolean last = true;
@@ -662,7 +658,7 @@ public final class NibbyNibble implements Runnable {
                 }
             }
             if (last && d0 <= 1) break;
-            for (int j = 1; j < 8; j++) {       // erase the segments of the window
+            for (int j = 1; j < 8; j++) {       // erase entries 1-7 (entry 7 is only erased)
                 if (dest[j] == 0) continue;
                 custom.w(0x040, shift[j] | 0x0bca);
                 custom.w(0x042, shift[j]);
@@ -673,8 +669,8 @@ public final class NibbyNibble implements Runnable {
                 custom.w(0x058, 0x0802);
             }
             replay.playSfx(Replay.SFX_DEATH);
-            for (int j = 1; j < 8; j++) {       // and draw the burning frames
-                int b = mem.l(DEATH_BURN + (j - 1) * 8), a = mem.l(DEATH_BURN + (j - 1) * 8 + 4);
+            for (int j = 0; j < 7; j++) {       // and draw the burning frames (entries 0-6)
+                int b = mem.l(DEATH_BURN + j * 8), a = mem.l(DEATH_BURN + j * 8 + 4);
                 if (dest[j] == 0) continue;
                 custom.w(0x040, shift[j] | 0x0fca);
                 custom.w(0x042, shift[j]);
@@ -743,20 +739,6 @@ public final class NibbyNibble implements Runnable {
         custom.l(0x080, COPPER_GAME_OVER);
         for (int i = 0; i < 151; i++) vsync();
         return false;
-    }
-
-    /** Clears the 16x16 block of a body segment, like the erase pass of {@link #death()}. */
-    private void eraseSegment(int segment) {
-        int k = 13 + 6 * segment;
-        int dest = bufShow + mem.w(XOFF_TABLE + hx(k)) + mem.sw(YOFF_TABLE + hy(k));
-        int shift = mem.w(SHIFT_TABLE + hx(k));
-        custom.w(0x040, shift | 0x0bca);
-        custom.w(0x042, shift);
-        custom.w(0x072, 0);
-        custom.l(0x048, dest);
-        custom.l(0x054, dest);
-        custom.l(0x050, ERASE_MASK);
-        custom.w(0x058, 0x0802);
     }
 
     // ================================================================ status bar
