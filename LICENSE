@@ -23,13 +23,15 @@ SOFTWARE.
 -------------------------------------------------------------------------------
 About the original game
 
-This license covers the work of the author of this repository: the Java code,
-the Python tools and the documentation.
+This license covers the work of the author of this repository: the Java code
+(native version at the root, emulated version in emu/), the Python tools and
+the documentation.
 
 The original game "Nibby Nibble" (c) 1993 Gabriele Roncolato was distributed
 as public domain software on the cover disk of the French magazine
-"Amiga Dream". The disassemblies in reverse/listings/ are provided for
-preservation and educational purposes, with credit to the original author.
-The original game data file is included unmodified in original-assets/ for
-preservation; it is not covered by the MIT License and remains credited to
-Gabriele Roncolato.
+"Amiga Dream". The following material comes from the original game and is
+kept for preservation and educational purposes, with credit to the original
+author; it is not covered by the MIT License:
+  - src/main/resources/assets/   graphics, levels and music extracted unmodified
+  - emu/original-assets/         the original game data file, unmodified
+  - emu/reverse/listings/        disassemblies of the original program

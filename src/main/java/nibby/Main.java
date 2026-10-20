@@ -13,181 +13,120 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.SourceDataLine;
 import javax.swing.JFrame;
-import nibby.amiga.Input;
-import nibby.amiga.Machine;
-import nibby.amiga.Memory;
-import nibby.amiga.Paula;
-import nibby.amiga.Rnc;
-import nibby.amiga.Video;
-import nibby.game.NibbyNibble;
 
 /**
- * Launcher: loads the original data file, starts the ported program and runs
- * the 50 Hz display/audio loop in a Swing window.
+ * Launcher of the native version.
  *
  * <pre>
- * java -jar nibbynibble.jar [path/to/data/Nibby] [--scale N] [--lives] [--time]
+ * java -jar nibbynibble.jar [--scale N] [--lives] [--time]
  * java -jar nibbynibble.jar --headless FRAMES OUTDIR [frame:action ...]
  * </pre>
  */
 public final class Main {
-    private static final int LOAD_ADDRESS = 0x30000;
-    private static final int SAMPLES_PER_FRAME = Paula.RATE / 50;
+    private static final int SAMPLES_PER_FRAME = ModPlayer.RATE / 50;
+    private static final AudioFormat FORMAT = new AudioFormat(ModPlayer.RATE, 16, 2, true, false);
 
     public static void main(String[] args) throws Exception {
-        String data = null;
         int scale = 3;
         boolean lives = false, time = false;
-        Integer headlessFrames = null;
-        String outDir = null;
+        Integer frames = null;
+        String out = null;
         List<String> script = new ArrayList<>();
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
                 case "--scale" -> scale = Integer.parseInt(args[++i]);
                 case "--lives" -> lives = true;
                 case "--time" -> time = true;
-                case "--data" -> data = args[++i];
                 case "--headless" -> {
-                    headlessFrames = Integer.parseInt(args[++i]);
-                    outDir = args[++i];
+                    frames = Integer.parseInt(args[++i]);
+                    out = args[++i];
                 }
-                default -> {
-                    if (headlessFrames != null && args[i].contains(":")) script.add(args[i]);
-                    else data = args[i];
-                }
+                default -> script.add(args[i]);
             }
         }
-
-        Machine machine = new Machine();
-        Path file = headlessFrames != null ? findData(data) : findOrAskData(data);
-        if (file == null) return;
-        loadProgram(machine.mem, file);
-        NibbyNibble game = new NibbyNibble(machine, lives, time);
-        machine.setInterrupts(game::level3Interrupt, game::keyboard);
-        machine.start(game);
-
-        if (headlessFrames != null) headless(machine, headlessFrames, Path.of(outDir), script);
-        else new Window(machine, scale).run();
+        Input input = new Input();
+        Game game = new Game(input, lives, time);
+        game.start();
+        if (frames != null) headless(game, input, frames, Path.of(out), script);
+        else new Window(game, input, scale).run();
     }
 
-    private static final String PREF_DATA = "dataFile";
-
-    static Path findData(String explicit) throws IOException {
-        Path p = searchData(explicit);
-        if (p == null) throw new IOException("data file 'Nibby' not found; pass its path as argument");
-        return p;
-    }
-
-    private static Path searchData(String explicit) {
-        List<Path> candidates = new ArrayList<>();
-        if (explicit != null) {
-            candidates.add(Path.of(explicit));
-        } else {
-            // next to the packaged executable (jpackage), then relative to the working directory
-            String app = System.getProperty("jpackage.app-path");
-            if (app != null) {
-                Path dir = Path.of(app).toAbsolutePath().getParent();
-                candidates.add(dir.resolve("original-assets/Nibby"));
-                candidates.add(dir.resolve("data/Nibby"));
-                candidates.add(dir.resolve("Nibby"));
-            }
-            for (String c : List.of("original-assets/Nibby", "data/Nibby", "Nibby", "../nibbynibble/data/Nibby"))
-                candidates.add(Path.of(c));
-            String saved = java.util.prefs.Preferences.userNodeForPackage(Main.class).get(PREF_DATA, null);
-            if (saved != null) candidates.add(Path.of(saved));
-        }
-        for (Path p : candidates) if (Files.isRegularFile(p)) return p;
-        return null;
-    }
-
-    /** Like {@link #findData} but asks the player to locate the file, and remembers it. */
-    static Path findOrAskData(String explicit) throws Exception {
-        Path p = searchData(explicit);
-        if (p != null) return p;
-        Path[] chosen = new Path[1];
-        javax.swing.SwingUtilities.invokeAndWait(() -> {
-            javax.swing.JOptionPane.showMessageDialog(null,
-                    "Ce portage a besoin du fichier de données original du jeu (data/Nibby\n"
-                            + "de l'installation WHDLoad de Nibby Nibble). Sélectionnez-le.",
-                    "Nibby Nibble", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-            var fc = new javax.swing.JFileChooser();
-            fc.setDialogTitle("Fichier de données Nibby");
-            if (fc.showOpenDialog(null) == javax.swing.JFileChooser.APPROVE_OPTION) chosen[0] = fc.getSelectedFile().toPath();
-        });
-        if (chosen[0] != null) {
-            java.util.prefs.Preferences.userNodeForPackage(Main.class).put(PREF_DATA, chosen[0].toAbsolutePath().toString());
-        }
-        return chosen[0];
-    }
-
-    static void loadProgram(Memory mem, Path file) throws IOException {
-        byte[] d = Files.readAllBytes(file);
-        if (Rnc.isPacked(d)) d = Rnc.unpack(d);
-        if (d.length != 0x40000) throw new IOException("unexpected size for " + file + ": " + d.length);
-        mem.load(d, LOAD_ADDRESS);
-    }
-
-    /** Runs without a window, saves requested frames and audio.wav, for testing: "120:fire+ 125:fire- 300:shot". */
-    static void headless(Machine m, int frames, Path out, List<String> script) throws IOException {
+    /** Runs without a window, saves frames and audio.wav: "100:fire+ 110:fire- 300:shot 120:key=T+ 123:key=T-". */
+    static void headless(Game game, Input input, int frames, Path out, List<String> script) throws IOException {
         Files.createDirectories(out);
-        BufferedImage img = new BufferedImage(Video.WIDTH, Video.HEIGHT, BufferedImage.TYPE_INT_RGB);
+        BufferedImage img = new BufferedImage(Game.WIDTH, Game.HEIGHT, BufferedImage.TYPE_INT_RGB);
+        int[] fb = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
         byte[] audio = new byte[SAMPLES_PER_FRAME * 4];
-        var wav = new java.io.ByteArrayOutputStream();
+        ByteArrayOutputStream wav = new ByteArrayOutputStream();
         for (int f = 0; f < frames; f++) {
+            boolean shot = false;
             for (String s : script) {
                 String[] p = s.split(":", 2);
                 if (Integer.parseInt(p[0]) != f) continue;
-                if (p[1].equals("shot")) {
-                    img.setRGB(0, 0, Video.WIDTH, Video.HEIGHT, m.video.pixels, 0, Video.WIDTH);
-                    ImageIO.write(img, "png", out.resolve(String.format("frame%05d.png", f)).toFile());
+                String a = p[1];
+                if (a.equals("shot")) {
+                    shot = true;
+                } else if (a.startsWith("key=")) {
+                    // key=X (press and release), key=X+ / key=X- ; '_' stands for space
+                    char c = a.charAt(4) == '_' ? ' ' : a.charAt(4);
+                    if (a.length() == 5 || a.endsWith("+")) input.key(c, true);
+                    if (a.length() == 5 || a.endsWith("-")) input.key(c, false);
                 } else {
-                    boolean on = p[1].endsWith("+");
-                    String what = p[1].substring(0, p[1].length() - 1);
-                    Input in = m.input;
-                    switch (what) {
-                        case "fire" -> in.fire = on;
-                        case "up" -> in.up = on;
-                        case "down" -> in.down = on;
-                        case "left" -> in.left = on;
-                        case "right" -> in.right = on;
-                        case "lmb" -> in.lmb = on;
-                        case "rmb" -> in.rmb = on;
-                        default -> in.keyEvent(Integer.parseInt(what, 16), on);
+                    boolean on = a.endsWith("+");
+                    switch (a.substring(0, a.length() - 1)) {
+                        case "fire" -> input.fire = on;
+                        case "up" -> input.up = on;
+                        case "down" -> input.down = on;
+                        case "left" -> input.left = on;
+                        case "right" -> input.right = on;
+                        case "lmb" -> input.lmb = on;
+                        case "rmb" -> input.rmb = on;
+                        case "esc" -> input.key((char) 27, on);
+                        default -> throw new IllegalArgumentException(a);
                     }
                 }
             }
-            m.frame();
-            m.custom.paula.mix(audio, SAMPLES_PER_FRAME);
+            game.step(input.nextKey());
+            game.render(fb);
+            game.music().mix(audio, SAMPLES_PER_FRAME);
             wav.write(audio);
+            if (shot) ImageIO.write(img, "png", out.resolve(String.format("frame%05d.png", f)).toFile());
         }
         byte[] pcm = wav.toByteArray();
-        AudioFormat fmt = new AudioFormat(Paula.RATE, 16, 2, true, false);
-        try (var ais = new javax.sound.sampled.AudioInputStream(new java.io.ByteArrayInputStream(pcm), fmt, pcm.length / 4)) {
-            AudioSystem.write(ais, javax.sound.sampled.AudioFileFormat.Type.WAVE, out.resolve("audio.wav").toFile());
+        try (var ais = new AudioInputStream(new ByteArrayInputStream(pcm), FORMAT, pcm.length / 4)) {
+            AudioSystem.write(ais, AudioFileFormat.Type.WAVE, out.resolve("audio.wav").toFile());
         }
     }
 
     /** Swing window; the audio line paces the loop at 50 frames per second. */
     static final class Window {
-        private final Machine machine;
+        private final Game game;
+        private final Input input;
         private final JFrame frame = new JFrame("Nibby Nibble");
         private final Canvas canvas = new Canvas();
-        private final BufferedImage image = new BufferedImage(Video.WIDTH, Video.HEIGHT, BufferedImage.TYPE_INT_RGB);
+        private final BufferedImage image = new BufferedImage(Game.WIDTH, Game.HEIGHT, BufferedImage.TYPE_INT_RGB);
+        private final int[] fb = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
         private volatile boolean running = true;
 
-        Window(Machine machine, int scale) {
-            this.machine = machine;
-            canvas.setPreferredSize(new Dimension(Video.WIDTH * scale, Video.HEIGHT * scale));
+        Window(Game game, Input input, int scale) {
+            this.game = game;
+            this.input = input;
+            canvas.setPreferredSize(new Dimension(Game.WIDTH * scale, Game.HEIGHT * scale));
             canvas.setBackground(Color.BLACK);
             canvas.setFocusTraversalKeysEnabled(false);
             frame.add(canvas);
@@ -232,49 +171,31 @@ public final class Main {
         }
 
         private void mouse(MouseEvent e, boolean on) {
-            if (e.getButton() == MouseEvent.BUTTON1) machine.input.lmb = on;
-            if (e.getButton() == MouseEvent.BUTTON3) machine.input.rmb = on;
+            if (e.getButton() == MouseEvent.BUTTON1) input.lmb = on;
+            if (e.getButton() == MouseEvent.BUTTON3) input.rmb = on;
         }
 
+        private final boolean[] down = new boolean[256];
+
         private void key(KeyEvent e, boolean on) {
-            Input in = machine.input;
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_UP, KeyEvent.VK_NUMPAD8 -> in.up = on;
-                case KeyEvent.VK_DOWN, KeyEvent.VK_NUMPAD2 -> in.down = on;
-                case KeyEvent.VK_LEFT, KeyEvent.VK_NUMPAD4 -> in.left = on;
-                case KeyEvent.VK_RIGHT, KeyEvent.VK_NUMPAD6 -> in.right = on;
-                case KeyEvent.VK_SHIFT, KeyEvent.VK_CONTROL, KeyEvent.VK_ENTER -> in.fire = on;
+            int k = e.getKeyCode();
+            switch (k) {
+                case KeyEvent.VK_UP, KeyEvent.VK_NUMPAD8 -> input.up = on;
+                case KeyEvent.VK_DOWN, KeyEvent.VK_NUMPAD2 -> input.down = on;
+                case KeyEvent.VK_LEFT, KeyEvent.VK_NUMPAD4 -> input.left = on;
+                case KeyEvent.VK_RIGHT, KeyEvent.VK_NUMPAD6 -> input.right = on;
+                case KeyEvent.VK_SHIFT, KeyEvent.VK_CONTROL, KeyEvent.VK_ENTER -> input.fire = on;
                 case KeyEvent.VK_F10 -> running = false;
                 default -> { }
             }
-            int raw = rawKey(e.getKeyCode());
-            if (raw >= 0 && (on != pressed[raw])) {
-                pressed[raw] = on;
-                in.keyEvent(raw, on);
+            char c = 0;
+            if (k >= KeyEvent.VK_A && k <= KeyEvent.VK_Z) c = (char) k;
+            else if (k == KeyEvent.VK_SPACE) c = ' ';
+            else if (k == KeyEvent.VK_ESCAPE) c = 27;
+            if (c != 0 && k < down.length && down[k] != on) {   // ignore key repeat
+                down[k] = on;
+                input.key(c, on);
             }
-        }
-
-        private final boolean[] pressed = new boolean[128];
-
-        /** AWT key code to Amiga raw key code (letters, digits, space, escape). */
-        static int rawKey(int vk) {
-            String rows = "QWERTYUIOP";
-            String home = "ASDFGHJKL";
-            String bottom = "ZXCVBNM";
-            if (vk >= KeyEvent.VK_A && vk <= KeyEvent.VK_Z) {
-                char c = (char) vk;
-                if (rows.indexOf(c) >= 0) return 0x10 + rows.indexOf(c);
-                if (home.indexOf(c) >= 0) return 0x20 + home.indexOf(c);
-                return 0x31 + bottom.indexOf(c);
-            }
-            if (vk >= KeyEvent.VK_1 && vk <= KeyEvent.VK_9) return vk - KeyEvent.VK_1 + 1;
-            return switch (vk) {
-                case KeyEvent.VK_0 -> 0x0a;
-                case KeyEvent.VK_SPACE -> 0x40;
-                case KeyEvent.VK_ESCAPE -> 0x45;
-                case KeyEvent.VK_ENTER -> 0x44;
-                default -> -1;
-            };
         }
 
         void run() throws Exception {
@@ -285,10 +206,11 @@ public final class Main {
             byte[] audio = new byte[SAMPLES_PER_FRAME * 4];
             long next = System.nanoTime();
             while (running) {
-                machine.frame();
-                machine.custom.paula.mix(audio, SAMPLES_PER_FRAME);
+                game.step(input.nextKey());
+                game.render(fb);
+                game.music().mix(audio, SAMPLES_PER_FRAME);
                 if (line != null) {
-                    line.write(audio, 0, audio.length);      // blocks: 50 Hz pacing
+                    line.write(audio, 0, audio.length);       // blocks: 50 Hz pacing
                 } else {
                     next += 20_000_000L;
                     long wait = next - System.nanoTime();
@@ -304,9 +226,8 @@ public final class Main {
 
         private SourceDataLine openAudio() {
             try {
-                AudioFormat fmt = new AudioFormat(Paula.RATE, 16, 2, true, false);
-                SourceDataLine line = AudioSystem.getSourceDataLine(fmt);
-                line.open(fmt, SAMPLES_PER_FRAME * 4 * 4);
+                SourceDataLine line = AudioSystem.getSourceDataLine(FORMAT);
+                line.open(FORMAT, SAMPLES_PER_FRAME * 4 * 4);
                 line.start();
                 return line;
             } catch (Exception e) {
@@ -320,7 +241,6 @@ public final class Main {
                 running = false;
                 return;
             }
-            image.setRGB(0, 0, Video.WIDTH, Video.HEIGHT, machine.video.pixels, 0, Video.WIDTH);
             try {
                 BufferStrategy bs = canvas.getBufferStrategy();
                 if (bs == null) {
@@ -333,7 +253,6 @@ public final class Main {
                 g.dispose();
                 if (!bs.contentsLost()) bs.show();
             } catch (IllegalStateException e) {
-                // window closed (or not yet realized) while drawing
                 if (!canvas.isDisplayable()) running = false;
             }
         }

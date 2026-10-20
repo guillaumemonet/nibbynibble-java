@@ -1,7 +1,5 @@
 build/
 .gradle/
 *.class
-# donnees du jeu original : non distribuees
-/data/
 *.bin
 *.wav

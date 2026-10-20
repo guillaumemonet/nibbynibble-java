@@ -18,11 +18,7 @@ jar {
     }
 }
 
-run {
-    workingDir = rootProject.projectDir
-}
-
-// Portable Windows/Linux/macOS application image with an embedded Java runtime:
+// Portable application image with an embedded Java runtime:
 //   gradle jpackageImage  ->  build/dist/NibbyNibble
 tasks.register('jpackageImage', Exec) {
     dependsOn jar
@@ -33,19 +29,12 @@ tasks.register('jpackageImage', Exec) {
             '--name', 'NibbyNibble',
             '--app-version', project.findProperty('appVersion') ?: '1.0.0',
             '--vendor', 'Guillaume Monet',
-            '--description', 'Nibby Nibble (Amiga 1993) - portage Java',
+            '--description', 'Nibby Nibble (Amiga 1993) - native Java version',
             '--icon', icon,
             '--input', jar.destinationDirectory.get().asFile.path,
             '--main-jar', jar.archiveFileName.get(),
             '--main-class', 'nibby.Main',
-            '--add-modules', 'java.desktop,java.prefs',
+            '--add-modules', 'java.desktop',
             '--jlink-options', '--strip-debug --no-man-pages --no-header-files --compress=zip-6',
             '--dest', dest.path
-    // the original game data (public domain) next to the executable
-    doLast {
-        copy {
-            from 'original-assets'
-            into new File(dest, 'NibbyNibble/original-assets')
-        }
-    }
 }
