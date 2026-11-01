@@ -18,6 +18,7 @@ a 32-colour palette for the fades and death effects, and a stand-alone module pl
 |---|---|
 | `/` (root) | **native Java version** (this README): extracted assets, plain Java game |
 | [`emu/`](emu/README.md) | **emulated Java port**: the original 68000 routines translated one by one on top of a small Amiga chipset emulation, the original data file, the disassembly listings and the analysis tools |
+| [`android/`](android/) | **Android version**: the same game code (shared sources and assets) with a touch/gamepad front end |
 | `tools/` | asset extractor (`extract_assets.py`) |
 
 ## Screenshots
@@ -73,6 +74,22 @@ Options: `--scale N` (window zoom, default 3), `--lives` / `--time` (unlimited l
 `frame:action` with `fire|up|down|left|right|lmb|rmb|esc` followed by `+`/`-`, `key=X+`/`key=X-`
 (`_` for space) or `shot`).
 
+## Android
+
+The same game runs on Android (7.0 or later): the shared code in `src/main/java` (everything but the
+desktop launcher) and the assets are used as they are, with an Android front end (`android/`): full screen
+landscape, pixel-exact integer scaling, sound through `AudioTrack` (which also paces the game at 50 Hz).
+
+- **Install**: download `NibbyNibble-<version>.apk` from the
+  [releases](https://github.com/guillaumemonet/nibbynibble-java/releases) and open it on the phone
+  (allow installing apps from this source when asked).
+- **Controls**: direction pad on the left, FIRE on the right; the *back* button acts as Esc (back to the
+  title) and leaves the game from the title screen. Gamepads (d-pad, A/B/X/Y, Start) and physical
+  keyboards (arrows, Shift/Ctrl/Enter, letters for the cheat code) work too.
+- **Build** (Android SDK required, platform 34): `cd android` then `./gradlew assembleRelease`. The
+  release signing key is read from `android/keystore.properties` (not versioned:
+  `storeFile`, `storePassword`, `keyAlias`, `keyPassword`); without it, use `./gradlew assembleDebug`.
+
 ## Controls
 
 | Action | Keys |
@@ -93,7 +110,7 @@ nibby/Game.java       the game: title, levels, movement, growth, collisions, fad
 nibby/ModPlayer.java  4-channel module player (the game's NoiseTracker-style replay) + sound effects
 nibby/Level.java      a maze loaded from levels/levelNN.txt + its two tiles
 nibby/Bitmap.java     image of palette indices (cookie-cut drawing, erasing)
-nibby/Assets.java     loading of the indexed PNG files and text files
+nibby/Assets.java     loading of the indexed PNG files (small pure Java decoder) and text files
 nibby/Input.java      input state
 ```
 

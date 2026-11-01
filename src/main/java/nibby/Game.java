@@ -150,6 +150,11 @@ public final class Game implements Runnable {
         return music;
     }
 
+    /** True while the title screen is shown (front ends use it for their "back" key). */
+    public boolean onTitle() {
+        return screen == Screen.TITLE;
+    }
+
     // ================================================================ frame sync
 
     private final java.util.concurrent.Semaphore toGame = new java.util.concurrent.Semaphore(0);

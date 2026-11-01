@@ -1,0 +1,62 @@
+plugins {
+    id 'com.android.application' version '8.7.3'
+}
+
+// The game itself is shared with the desktop version: copy its portable sources
+// (everything but the Swing launcher) and use its assets folder directly.
+def coreDir = layout.buildDirectory.dir('generated/core/java')
+def syncCore = tasks.register('syncCore', Sync) {
+    from('../src/main/java') {
+        exclude 'nibby/Main.java'
+    }
+    into coreDir
+}
+preBuild.dependsOn syncCore
+
+// Release signing: keystore.properties (not versioned) gives the keystore and its passwords.
+def keystoreProps = new Properties()
+def keystoreFile = rootProject.file('keystore.properties')
+if (keystoreFile.exists()) keystoreFile.withInputStream { keystoreProps.load(it) }
+
+android {
+    namespace 'nibby.android'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'io.github.guillaumemonet.nibbynibble'
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName '2.1.0'
+    }
+
+    sourceSets {
+        main {
+            java.srcDir(coreDir)
+            assets.srcDirs = ['../src/main/resources/assets']
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    signingConfigs {
+        release {
+            if (keystoreProps['storeFile']) {
+                storeFile file(keystoreProps['storeFile'])
+                storePassword keystoreProps['storePassword']
+                keyAlias keystoreProps['keyAlias']
+                keyPassword keystoreProps['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig keystoreProps['storeFile'] ? signingConfigs.release : null
+        }
+    }
+}

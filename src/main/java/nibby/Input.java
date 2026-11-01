@@ -13,7 +13,7 @@ public final class Input {
         keys.add(pressed ? c : (char) 0);
     }
 
-    Character nextKey() {
+    public Character nextKey() {
         return keys.poll();
     }
 }

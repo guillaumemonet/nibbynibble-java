@@ -19,6 +19,7 @@ de mort, et un lecteur de module autonome.
 |---|---|
 | `/` (racine) | **version Java native** (ce README) : ressources extraites, jeu en Java classique |
 | [`emu/`](emu/README.fr.md) | **portage Java émulé** : les routines 68000 d'origine traduites une à une au-dessus d'une petite émulation du chipset Amiga, le fichier de données original, les listings désassemblés et les outils d'analyse |
+| [`android/`](android/) | **version Android** : le même code de jeu (sources et ressources partagées) avec une interface tactile/manette |
 | `tools/` | extracteur de ressources (`extract_assets.py`) |
 
 ## Captures d'écran
@@ -76,6 +77,23 @@ illimités), `--headless TRAMES DOSSIER événements...` (exécution sans fenêt
 `audio.wav` ; événements `trame:action` avec `fire|up|down|left|right|lmb|rmb|esc` suivis de `+`/`-`,
 `key=X+`/`key=X-` (`_` pour espace) ou `shot`).
 
+## Android
+
+Le même jeu tourne sur Android (7.0 ou plus récent) : le code partagé de `src/main/java` (tout sauf le
+lanceur PC) et les ressources sont utilisés tels quels, avec une interface Android (`android/`) : plein
+écran en paysage, agrandissement entier au pixel près, son via `AudioTrack` (qui cadence aussi le jeu à
+50 Hz).
+
+- **Installation** : télécharger `NibbyNibble-<version>.apk` dans les
+  [releases](https://github.com/guillaumemonet/nibbynibble-java/releases) et l'ouvrir sur le téléphone
+  (autoriser l'installation d'applications depuis cette source quand c'est demandé).
+- **Contrôles** : croix directionnelle à gauche, FIRE à droite ; le bouton *retour* fait Échap (retour au
+  titre) et quitte le jeu depuis l'écran titre. Les manettes (croix, A/B/X/Y, Start) et les claviers
+  physiques (flèches, Shift/Ctrl/Entrée, lettres pour le cheat code) fonctionnent aussi.
+- **Compilation** (SDK Android requis, plateforme 34) : `cd android` puis `./gradlew assembleRelease`. La
+  clé de signature de release est lue dans `android/keystore.properties` (non versionné :
+  `storeFile`, `storePassword`, `keyAlias`, `keyPassword`) ; sans elle, utiliser `./gradlew assembleDebug`.
+
 ## Contrôles
 
 | Action | Touches |
@@ -96,7 +114,7 @@ nibby/Game.java       le jeu : titre, niveaux, déplacement, croissance, collisi
 nibby/ModPlayer.java  lecteur de module 4 voies (le replay style NoiseTracker du jeu) + bruitages
 nibby/Level.java      un labyrinthe chargé depuis levels/levelNN.txt + ses deux tuiles
 nibby/Bitmap.java     image d'index de palette (dessin avec masque, effacement)
-nibby/Assets.java     chargement des PNG indexés et des fichiers texte
+nibby/Assets.java     chargement des PNG indexés (petit décodeur en Java pur) et des fichiers texte
 nibby/Input.java      état des entrées
 ```
 
