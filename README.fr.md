@@ -87,8 +87,9 @@ lanceur PC) et les ressources sont utilisés tels quels, avec une interface Andr
 - **Installation** : télécharger `NibbyNibble-<version>.apk` dans les
   [releases](https://github.com/guillaumemonet/nibbynibble-java/releases) et l'ouvrir sur le téléphone
   (autoriser l'installation d'applications depuis cette source quand c'est demandé).
-- **Contrôles** : croix directionnelle à gauche, FIRE à droite ; le bouton *retour* fait Échap (retour au
-  titre) et quitte le jeu depuis l'écran titre. Les manettes (croix, A/B/X/Y, Start) et les claviers
+- **Contrôles** : croix directionnelle à gauche, FIRE à droite ; le bouton ← (en haut à gauche) ou la
+  touche *retour* fait Échap (retour au titre) et quitte le jeu depuis l'écran titre ; le bouton ✕ (en
+  haut à droite) ferme le jeu. Les manettes (croix, A/B/X/Y, Start) et les claviers
   physiques (flèches, Shift/Ctrl/Entrée, lettres pour le cheat code) fonctionnent aussi.
 - **Compilation** (SDK Android requis, plateforme 34) : `cd android` puis `./gradlew assembleRelease`. La
   clé de signature de release est lue dans `android/keystore.properties` (non versionné :

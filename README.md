@@ -83,8 +83,9 @@ landscape, pixel-exact integer scaling, sound through `AudioTrack` (which also p
 - **Install**: download `NibbyNibble-<version>.apk` from the
   [releases](https://github.com/guillaumemonet/nibbynibble-java/releases) and open it on the phone
   (allow installing apps from this source when asked).
-- **Controls**: direction pad on the left, FIRE on the right; the *back* button acts as Esc (back to the
-  title) and leaves the game from the title screen. Gamepads (d-pad, A/B/X/Y, Start) and physical
+- **Controls**: direction pad on the left, FIRE on the right; the ← button (top left) or the *back* key
+  acts as Esc (back to the title) and leaves the game from the title screen; the ✕ button (top right)
+  closes the game. Gamepads (d-pad, A/B/X/Y, Start) and physical
   keyboards (arrows, Shift/Ctrl/Enter, letters for the cheat code) work too.
 - **Build** (Android SDK required, platform 34): `cd android` then `./gradlew assembleRelease`. The
   release signing key is read from `android/keystore.properties` (not versioned:

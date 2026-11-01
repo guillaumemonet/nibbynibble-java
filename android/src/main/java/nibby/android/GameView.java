@@ -38,6 +38,17 @@ final class GameView extends SurfaceView implements SurfaceHolder.Callback, Runn
     private final Paint label = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Rect src = new Rect(0, 0, Game.WIDTH, Game.HEIGHT), dst = new Rect();
 
+    /** Actions of the two buttons at the top of the screen. */
+    interface Buttons {
+        void back();   // like Esc: back to the title (leaves the game from the title screen)
+        void quit();   // close the game
+    }
+
+    private final Buttons buttons;
+    private final Paint stroke = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private float backX, backY, quitX, quitY, buttonR;
+    private int pressedButton;  // 1 back, 2 quit (highlight while touched)
+
     private AudioTrack track;
     private Thread loop;
     private volatile boolean running, surface;
@@ -47,16 +58,21 @@ final class GameView extends SurfaceView implements SurfaceHolder.Callback, Runn
     private int touchDir;      // 0, or Game direction bits currently pressed by touch
     private boolean touchFire;
 
-    GameView(Context context, Game game, Input input) {
+    GameView(Context context, Game game, Input input, Buttons buttons) {
         super(context);
         this.game = game;
         this.input = input;
+        this.buttons = buttons;
         pixels.setFilterBitmap(false);
         pad.setColor(Color.argb(70, 255, 255, 255));
         padOn.setColor(Color.argb(150, 255, 210, 0));
         label.setColor(Color.argb(170, 255, 255, 255));
         label.setTextAlign(Paint.Align.CENTER);
         label.setFakeBoldText(true);
+        stroke.setColor(Color.argb(190, 255, 255, 255));
+        stroke.setStyle(Paint.Style.STROKE);
+        stroke.setStrokeCap(Paint.Cap.ROUND);
+        stroke.setStrokeJoin(Paint.Join.ROUND);
         getHolder().addCallback(this);
         setFocusable(true);
         setKeepScreenOn(true);
@@ -139,6 +155,11 @@ final class GameView extends SurfaceView implements SurfaceHolder.Callback, Runn
         fireX = margin >= fireR * 2 ? w - margin / 2 : w - fireR * 1.3f;
         padY = fireY = h * 0.62f;
         label.setTextSize(fireR * 0.42f);
+        buttonR = Math.min(fireR * 0.5f, h * 0.075f);
+        backX = padX;
+        quitX = fireX;
+        backY = quitY = Math.max(buttonR * 1.4f, h * 0.13f);
+        stroke.setStrokeWidth(buttonR * 0.16f);
     }
 
     // ---------------------------------------------------------------- loop
@@ -177,6 +198,26 @@ final class GameView extends SurfaceView implements SurfaceHolder.Callback, Runn
         arrow(c, 1, 0, a, t, (touchDir & RIGHT) != 0);
         c.drawCircle(fireX, fireY, fireR, touchFire ? padOn : pad);
         c.drawText("FIRE", fireX, fireY + label.getTextSize() * 0.35f, label);
+
+        // back: an arrow pointing left
+        c.drawCircle(backX, backY, buttonR, pressedButton == 1 ? padOn : pad);
+        float r = buttonR * 0.45f;
+        c.drawLine(backX - r, backY, backX + r, backY, stroke);
+        c.drawLine(backX - r, backY, backX - r * 0.2f, backY - r * 0.75f, stroke);
+        c.drawLine(backX - r, backY, backX - r * 0.2f, backY + r * 0.75f, stroke);
+        // quit: a cross
+        c.drawCircle(quitX, quitY, buttonR, pressedButton == 2 ? padOn : pad);
+        float q = buttonR * 0.38f;
+        c.drawLine(quitX - q, quitY - q, quitX + q, quitY + q, stroke);
+        c.drawLine(quitX - q, quitY + q, quitX + q, quitY - q, stroke);
+    }
+
+    /** 1 or 2 if (x, y) is on the back or quit button. */
+    private int buttonAt(float x, float y) {
+        float hit = buttonR * 1.4f;
+        if (Math.hypot(x - backX, y - backY) <= hit) return 1;
+        if (Math.hypot(x - quitX, y - quitY) <= hit) return 2;
+        return 0;
     }
 
     private void arrow(Canvas c, int dx, int dy, float dist, float size, boolean on) {
@@ -196,15 +237,26 @@ final class GameView extends SurfaceView implements SurfaceHolder.Callback, Runn
     @Override
     @SuppressLint("ClickableViewAccessibility")
     public boolean onTouchEvent(MotionEvent e) {
+        int action = e.getActionMasked();
+        if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN) {
+            int i = e.getActionIndex();
+            int b = buttonAt(e.getX(i), e.getY(i));
+            if (b == 1) buttons.back();
+            if (b == 2) buttons.quit();
+        }
         int dir = 0;
         boolean fire = false;
+        int pressed = 0;
         int up = e.getActionMasked() == MotionEvent.ACTION_UP || e.getActionMasked() == MotionEvent.ACTION_CANCEL
                 ? -2 : e.getActionMasked() == MotionEvent.ACTION_POINTER_UP ? e.getActionIndex() : -1;
         if (up != -2) {
             for (int i = 0; i < e.getPointerCount(); i++) {
                 if (i == up) continue;
                 float x = e.getX(i), y = e.getY(i);
-                if (x < getWidth() / 2f) {
+                int b = buttonAt(x, y);
+                if (b != 0) {
+                    pressed = b;            // a finger on a button is neither a direction nor fire
+                } else if (x < getWidth() / 2f) {
                     // direction pad: the dominant axis from its centre, with a small dead zone
                     float dx = x - padX, dy = y - padY;
                     if (Math.hypot(dx, dy) > padR * 0.15f)
@@ -216,6 +268,7 @@ final class GameView extends SurfaceView implements SurfaceHolder.Callback, Runn
         }
         touchDir = dir;
         touchFire = fire;
+        pressedButton = pressed;
         input.right = (dir & RIGHT) != 0;
         input.left = (dir & LEFT) != 0;
         input.down = (dir & DOWN) != 0;

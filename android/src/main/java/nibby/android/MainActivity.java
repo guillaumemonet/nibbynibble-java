@@ -34,7 +34,17 @@ public final class MainActivity extends Activity {
             game = new Game(input, false, false);
             game.start();
         }
-        view = new GameView(this, game, input);
+        view = new GameView(this, game, input, new GameView.Buttons() {
+            @Override
+            public void back() {
+                runOnUiThread(MainActivity.this::goBack);
+            }
+
+            @Override
+            public void quit() {
+                runOnUiThread(MainActivity.this::quit);
+            }
+        });
         setContentView(view);
     }
 
@@ -67,12 +77,24 @@ public final class MainActivity extends Activity {
     @Override
     @SuppressWarnings("deprecation")
     public void onBackPressed() {
+        goBack();
+    }
+
+    /** Back: Esc during a game (back to the title, like on the Amiga), quit from the title screen. */
+    private void goBack() {
         if (game.onTitle()) {
-            super.onBackPressed();          // leave the game from the title screen
+            quit();
         } else {
-            input.key((char) 27, true);     // Esc: back to the title, like on the Amiga
+            input.key((char) 27, true);
             input.key((char) 27, false);
         }
+    }
+
+    /** Closes the game for good: the next launch starts again from the title screen. */
+    private void quit() {
+        finishAndRemoveTask();
+        view.pause();
+        System.exit(0);
     }
 
     @Override
