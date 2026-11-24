@@ -46,17 +46,35 @@ pixels du corps de couleur 3 comptent), chrono qui ne tue qu'en bougeant à 0, d
 d'état rafraîchie par la routine musicale, bruitages qui remplacent temporairement la voie 2 de la
 musique.
 
-## Préservation et but éducatif
+## Mentions légales et données du jeu
 
-Ce projet a pour seul but la **préservation du patrimoine du jeu vidéo Amiga** et un **usage
-éducatif**. Le jeu original, © 1993 Gabriele Roncolato, a été distribué en **domaine public** sur la
-disquette du magazine *Amiga Dream* ; tout le mérite du jeu revient à son auteur. Les ressources de
-`src/main/resources/assets/` ont été extraites sans modification des données du jeu original ; elles ne
-sont pas couvertes par la licence MIT. Ce projet n'a aucune vocation commerciale ; si un ayant droit
-souhaite son retrait, il suffit d'ouvrir une issue ou de contacter l'auteur.
+### Implémentation indépendante du moteur
 
-Auteur de la version Java : Guillaume Monet (guillaume.monet@free.fr). Licence : [MIT](LICENSE) pour le
-code, les outils et la documentation.
+Ce projet est une réimplémentation indépendante du moteur de *Nibby Nibble*, conçue pour reproduire le comportement du jeu d'origine sur les plateformes modernes.
+
+Le moteur a été développé de façon indépendante, par analyse technique, rétro-ingénierie (décompilation du programme 68000 d'origine) et tests de compatibilité. Il n'inclut ni ne redistribue le code source propriétaire du jeu d'origine.
+
+### Fichiers du jeu d'origine
+
+*Nibby Nibble* (© 1993 Gabriele Roncolato) a été distribué comme logiciel du **domaine public** sur la disquette de couverture du magazine *Amiga Dream* ; tout le mérite du jeu revient à son auteur. Les ressources de `src/main/resources/assets/` ont été extraites sans modification des données du jeu d'origine ; elles ne sont pas couvertes par la licence MIT. Ce projet est strictement non commercial ; si un ayant droit souhaite son retrait, il suffit d'ouvrir une issue ou de contacter l'auteur.
+
+Eloane Studio n'héberge, ne distribue ni ne fournit de copies non autorisées de données de jeu protégées par le droit d'auteur.
+
+### Droits d'auteur et marques
+
+Les noms, marques, graphismes, musiques et autres éléments propriétaires de *Nibby Nibble* restent la propriété de leurs titulaires respectifs (Gabriele Roncolato).
+
+Ce projet est une implémentation indépendante et non officielle ; il n'est ni affilié, ni approuvé, ni soutenu par les développeurs ou les éditeurs du jeu d'origine.
+
+### Préservation
+
+Ce projet a pour but de préserver le comportement technique et l'expérience de jeu des jeux vidéo classiques, tout en les rendant accessibles sur les systèmes modernes.
+
+Le moteur est fourni à des fins de compatibilité, de préservation et d'éducation.
+
+### Auteur et licence
+
+Auteur de la version Java : Guillaume Monet (guillaume.monet@free.fr). Licence : [MIT](LICENSE) pour le code, les outils et la documentation.
 
 ## Lancer
 

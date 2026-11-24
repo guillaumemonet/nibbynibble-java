@@ -43,17 +43,35 @@ frame late (triple buffering in the original), the pixel-accurate head/body coll
 of colour 3 count), the timer that only kills when moving at 0, the copper rainbows, the status bar
 refreshed by the music routine, and the sound effects that temporarily replace channel 2 of the music.
 
-## Preservation and educational purpose
+## Legal Notice & Game Assets
 
-This project exists only for the **preservation of Amiga video game heritage** and for **educational
-use**. The original game, © 1993 Gabriele Roncolato, was distributed as **public domain** software on
-the cover disk of the French magazine *Amiga Dream*; all credit for the game goes to its author.
-The assets in `src/main/resources/assets/` were extracted unmodified from the original game data; they
-are not covered by the MIT license. This project is strictly non-commercial; if a rights holder wishes
-it to be taken down, just open an issue or contact the author.
+### Independent Engine Implementation
 
-Author of the Java version: Guillaume Monet (guillaume.monet@free.fr). License: [MIT](LICENSE) for the
-code, tools and documentation.
+This project is an independent reimplementation of the *Nibby Nibble* engine, designed to reproduce the original game's behavior on modern platforms.
+
+The engine has been developed independently through technical analysis, reverse engineering (decompilation of the original 68000 program), and compatibility testing. It does not include or redistribute the original game's proprietary source code.
+
+### Original Game Files
+
+*Nibby Nibble* (© 1993 Gabriele Roncolato) was distributed as **public domain** software on the cover disk of the French magazine *Amiga Dream*; all credit for the game goes to its author. The assets in `src/main/resources/assets/` were extracted unmodified from the original game data; they are not covered by the MIT license. This project is strictly non-commercial; if a rights holder wishes it to be taken down, just open an issue or contact the author.
+
+Eloane Studio does not host, distribute, or provide unauthorized copies of copyrighted game assets.
+
+### Copyright & Trademarks
+
+All original game names, trademarks, graphics, music, and other proprietary assets of *Nibby Nibble* remain the property of their respective copyright holders (Gabriele Roncolato).
+
+This project is an independent, unofficial implementation and is not affiliated with, endorsed by, or sponsored by the original game's developers or publishers.
+
+### Preservation
+
+The purpose of this project is to preserve the technical behavior and gameplay experience of classic video games while making them accessible on modern systems.
+
+The engine is provided for compatibility, preservation, and educational purposes.
+
+### Author and license
+
+Author of the Java version: Guillaume Monet (guillaume.monet@free.fr). License: [MIT](LICENSE) for the code, tools and documentation.
 
 ## Running
 
