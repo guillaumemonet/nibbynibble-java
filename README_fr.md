@@ -4,7 +4,7 @@
 
 Version Java native du jeu Amiga **Nibby Nibble** (© 1993 Gabriele Roncolato). Elle a été réécrite en
 Java pur à partir de ce que la décompilation du programme 68000 d'origine a appris sur le jeu
-(voir la [version émulée](emu/README.fr.md) dans le dossier `emu/` de ce dépôt, qui
+(voir la [version émulée](emu/README_fr.md) dans le dossier `emu/` de ce dépôt, qui
 porte le code d'origine routine par routine au-dessus d'une petite émulation du chipset Amiga).
 
 Ici, aucune émulation : ni 68000, ni copper, ni blitter, ni mémoire Amiga. Les graphismes, les niveaux
@@ -18,7 +18,7 @@ de mort, et un lecteur de module autonome.
 | dossier | contenu |
 |---|---|
 | `/` (racine) | **version Java native** (ce README) : ressources extraites, jeu en Java classique |
-| [`emu/`](emu/README.fr.md) | **portage Java émulé** : les routines 68000 d'origine traduites une à une au-dessus d'une petite émulation du chipset Amiga, le fichier de données original, les listings désassemblés et les outils d'analyse |
+| [`emu/`](emu/README_fr.md) | **portage Java émulé** : les routines 68000 d'origine traduites une à une au-dessus d'une petite émulation du chipset Amiga, le fichier de données original, les listings désassemblés et les outils d'analyse |
 | [`android/`](android/) | **version Android** : le même code de jeu (sources et ressources partagées) avec une interface tactile/manette |
 | `tools/` | extracteur de ressources (`extract_assets.py`) |
 

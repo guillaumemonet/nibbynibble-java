@@ -1,6 +1,6 @@
 # Nibby Nibble — emulated Java port
 
-[Version française](README.fr.md) · [Native version (repository root)](../README.md)
+[Version française](README_fr.md) · [Native version (repository root)](../README.md)
 
 Java port of the Amiga game **Nibby Nibble** (© 1993 Gabriele Roncolato, presented by Amiga News),
 obtained by decompiling the original 68000 program (`data/Nibby` from the WHDLoad install, kept in `original-assets/Nibby`).

@@ -1,6 +1,6 @@
 # Nibby Nibble — native Java version
 
-[Version française](README.fr.md)
+[Version française](README_fr.md)
 
 Native Java version of the Amiga game **Nibby Nibble** (© 1993 Gabriele Roncolato). It was rewritten
 in plain Java from the knowledge gained by decompiling the original 68000 program

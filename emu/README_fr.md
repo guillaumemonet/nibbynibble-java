@@ -1,12 +1,12 @@
 # Nibby Nibble — portage Java émulé
 
-[English version](README.md) · [Version native (racine du dépôt)](../README.fr.md)
+[English version](README.md) · [Version native (racine du dépôt)](../README_fr.md)
 
 Portage en Java du jeu Amiga **Nibby Nibble** (© 1993 Gabriele Roncolato, publié par Amiga News),
 obtenu en décompilant le programme 68000 d'origine (`data/Nibby` de l'installation WHDLoad, conservé dans `original-assets/Nibby`).
 
 C'est la première étape du projet : les routines d'origine traduites une à une, qui tournent sur une
-petite émulation du chipset Amiga. La [version native](../README.fr.md) à la racine du dépôt a ensuite été
+petite émulation du chipset Amiga. La [version native](../README_fr.md) à la racine du dépôt a ensuite été
 écrite à partir de ce travail, et vérifiée image par image (au pixel près) contre elle.
 
 ## Captures d'écran
